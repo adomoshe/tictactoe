@@ -1,14 +1,11 @@
 import React from 'react';
-import './App.css';
+
+import Auth from './components/Auth';
 
 export default function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-      </header>
+    <div className="app">
+      <Auth />
     </div>
   );
 }
