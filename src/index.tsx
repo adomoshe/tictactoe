@@ -5,11 +5,13 @@ import { Auth0Provider } from '@auth0/auth0-react';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
+require('dotenv').config();
+
 ReactDOM.render(
   <React.StrictMode>
     <Auth0Provider
-      domain="tictactoe1.us.auth0.com"
-      clientId="nROc0TJQJDz4hHI0WyHN4sskqKZ4OTy0"
+      domain={process.env.REACT_APP_AUTH0_DOMAIN as string}
+      clientId={process.env.REACT_APP_AUTH0_CLIENT_ID as string}
       redirectUri={window.location.origin}
     >
       <App />
