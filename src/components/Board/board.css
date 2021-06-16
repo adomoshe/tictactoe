@@ -26,6 +26,7 @@
   border: 1px solid black;
   font-size: 42px;
 }
+
 .board .row .square:disabled {
   color: black;
   background-color: white;

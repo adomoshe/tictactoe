@@ -3,6 +3,7 @@ import io from 'socket.io-client';
 import {
   AppBar, Toolbar, Typography, makeStyles,
 } from '@material-ui/core';
+import { useAuth0 } from '@auth0/auth0-react';
 
 import AuthenticationAction from './components/AuthenticationAction';
 import Board from './components/Board';
@@ -25,6 +26,8 @@ const useStyles = makeStyles((theme) => ({
 export default function App() {
   const classes = useStyles();
 
+  const { isAuthenticated } = useAuth0();
+
   return (
     <div className="app">
       <AppBar position="static" color="primary">
@@ -35,7 +38,7 @@ export default function App() {
           <AuthenticationAction />
         </Toolbar>
       </AppBar>
-      <Board socket={socket} />
+      {isAuthenticated ? <Board socket={socket} /> : null}
     </div>
   );
 }
