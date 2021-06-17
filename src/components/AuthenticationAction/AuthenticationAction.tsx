@@ -6,10 +6,8 @@ import './authentication.css';
 
 export default function Login(): JSX.Element {
   const {
-    loginWithRedirect, logout, user, isAuthenticated, isLoading,
+    loginWithRedirect, logout, isAuthenticated, isLoading,
   } = useAuth0();
-
-  console.log(user, isAuthenticated, isLoading);
 
   return isAuthenticated ? (
     <Button

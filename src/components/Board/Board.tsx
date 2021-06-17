@@ -1,17 +1,17 @@
-import React, { useCallback, useState, useEffect } from 'react';
-// import Alert from '@material-ui/lab/Alert';
-import { Socket } from 'socket.io-client';
-import { DefaultEventsMap } from 'socket.io-client/build/typed-events';
+import React, {
+  useCallback, useState, useEffect, useContext,
+} from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
+
+import { SocketContext } from '../../context/socket';
 
 import './board.css';
 
-interface IBoardProps {
-  socket: Socket<DefaultEventsMap, DefaultEventsMap>;
-}
+type IRow = 'x' | 'y' | 'z';
+type INumber = '1' | '2' | '3';
 
-export default function Board(props: IBoardProps) {
-  const { socket } = props;
+export default function Board() {
+  const socket = useContext(SocketContext);
   const { user } = useAuth0();
 
   interface IBoard {
@@ -27,54 +27,50 @@ export default function Board(props: IBoardProps) {
 
   useEffect(() => {
     socket.emit('joined', { id: user?.sub });
+    return () => {
+      // before the component is destroyed
+      // unbind all event handlers used in this component
+      socket.off('joined');
+    };
+  }, [socket]);
+
+  const setBoard = useCallback((row: IRow, number: INumber) => {
+    setStateBoard((board) => ({
+      ...board,
+      [row]: { ...board[row], [number]: stateSign },
+    }));
   }, []);
 
-  // const [stateError, setStateError] = useState('');
+  const selectSpace = useCallback((row: IRow, number: INumber) => {
+    setBoard(row, number);
+    socket.emit('play:space', `${row}|${number}`);
+  }, []);
 
-  const selectSpace = useCallback(
-    (row: 'x' | 'y' | 'z', number: '1' | '2' | '3') => {
-      // if (board[id] !== null) {
-      //   setStateError('You lost');
-      // }
-      setStateBoard((board) => ({
-        ...board,
-        [row]: { ...board[row], [number]: stateSign },
-      }));
-      socket.emit('play:space', `[${row}][${number}]`);
-      console.log(`[${row}][${number}]`);
-    },
-    [],
-  );
+  socket.on('play:receive', (move) => {
+    setBoard(move.split('|')[0], move.split('|')[1]);
+  });
 
-  socket.on('play:receive', (move) => console.log('receive', move));
   socket.on('join:response', (config: { sign: 'O' | 'X' }) => {
-    console.log(config);
     setStateSign(config.sign);
   });
+
   return (
-    <>
-      {/* {stateError ? (
-        <Alert variant="filled" className="error-alert" severity="error">
-          {stateError}
-        </Alert>
-      ) : null} */}
-      <div className="board">
-        {Object.entries(stateBoard).map(([row, items]) => (
-          <div className="row" key={row}>
-            {Object.entries(items).map(([item, value]) => (
-              <button
-                key={item}
-                type="button"
-                className="square"
-                disabled={value !== null}
-                onClick={() => selectSpace(row as 'x' | 'y' | 'z', item as '1' | '2' | '3')}
-              >
-                {value}
-              </button>
-            ))}
-          </div>
-        ))}
-      </div>
-    </>
+    <div className="board">
+      {Object.entries(stateBoard).map(([row, items]) => (
+        <div className="row" key={row}>
+          {Object.entries(items).map(([item, value]) => (
+            <button
+              key={item}
+              type="button"
+              className="square"
+              disabled={value !== null}
+              onClick={() => selectSpace(row as IRow, item as INumber)}
+            >
+              {value}
+            </button>
+          ))}
+        </div>
+      ))}
+    </div>
   );
 }
