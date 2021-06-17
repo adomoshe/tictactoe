@@ -1,0 +1,36 @@
+.board {
+  width: 100%;
+  margin-top: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.error-alert {
+  position: absolute;
+  margin-left: auto;
+  width: 300px;
+  margin-top: 30px;
+}
+
+.board .row {
+  display: flex;
+}
+
+.board .row .square {
+  width: 80px;
+  height: 80px;
+  cursor: pointer;
+  color: black;
+  background-color: white;
+  border: 1px solid black;
+  font-size: 42px;
+}
+
+.board .row .square:disabled {
+  color: black;
+  background-color: white;
+  border: 1px solid black;
+  cursor: not-allowed;
+
+}
